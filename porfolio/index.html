@@ -2339,44 +2339,23 @@
         });
       });
 
-      // Hero photo slideshow
-     (function () {
-  function startSlideshow(avatar) {
-    const allSlides = avatar.querySelectorAll(".slide");
-    if (allSlides.length < 1) return;
+   (function () {
+        function startSlideshow(avatar) {
+          var allSlides = avatar.querySelectorAll(".slide");
+          if (allSlides.length < 1) return;
 
-    // Wait until all images are loaded
-    Promise.all(
-      Array.from(allSlides).map(img => {
-        return new Promise(resolve => {
-          if (img.complete && img.naturalWidth > 0) {
-            resolve();
-          } else {
-            img.addEventListener("load", resolve);
-            img.addEventListener("error", resolve); // still resolve on error
-          }
-        });
-      })
-    ).then(() => {
-      let current = 0;
+          // Wait for images to attempt loading, then filter to loaded ones
+          setTimeout(function () {
+            var slides = Array.from(allSlides).filter(function (img) {
+              return img.naturalWidth > 0;
+            });
 
-      // Show the first slide
-      allSlides.forEach(s => s.classList.remove("active"));
-      allSlides[0].classList.add("active");
-
-      // Cycle through slides
-      setInterval(() => {
-        allSlides[current].classList.remove("active");
-        current = (current + 1) % allSlides.length;
-        allSlides[current].classList.add("active");
-      }, 3000);
-    });
-  }
-
-  document.querySelectorAll(".hero__avatar").forEach(startSlideshow);
-})();
-
-
+            // If no images loaded at all, show fallback EN
+            if (slides.length === 0) {
+              var fallback = avatar.querySelector(".avatar-fallback");
+              if (fallback) fallback.style.opacity = "1";
+              return;
+            }
             // Hide the EN fallback since we have real images
             var fallback = avatar.querySelector(".avatar-fallback");
             if (fallback) fallback.style.display = "none";
